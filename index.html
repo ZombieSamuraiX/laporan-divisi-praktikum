@@ -294,9 +294,6 @@
   }
   .proker-visual-card:hover .proker-visual-image img { transform: scale(1.05); }
   
-  .proker-visual-footer { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-  .pj-tag { padding: 8px 14px; background: var(--bg-soft); border-radius: 8px; font-size: clamp(11px, 0.9vw, 13px); color: var(--ink-soft); }
-
   .closing { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
   .closing-mark { width: clamp(72px, 7vw, 88px); height: clamp(72px, 7vw, 88px); display: grid; place-items: center; border-radius: 24px; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); margin-bottom: clamp(32px, 5vh, 56px); color: white; box-shadow: var(--shadow-lg); }
   .closing-mark svg { width: clamp(32px, 3.5vw, 40px); height: clamp(32px, 3.5vw, 40px); }
@@ -682,9 +679,6 @@
                 </div>
                 <div class="proker-visual-image">
                   <img src="${p.image}" alt="Ilustrasi ${p.code}" loading="lazy" />
-                </div>
-                <div class="proker-visual-footer">
-                  ${p.pj.map(n => `<div class="pj-tag">${n}</div>`).join('')}
                 </div>
               </div>
             </div>
