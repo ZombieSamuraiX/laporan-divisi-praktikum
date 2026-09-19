@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Laporan Divisi Praktikum — LABKOMMAT FMIPA UNM 2026/2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg: #f5f1ea;
+    --bg-soft: #ebe5da;
+    --surface: #ffffff;
+    --surface-2: #faf7f2;
+    --ink: #2a2520;
+    --ink-soft: #5c554c;
+    --ink-mute: #8a8278;
+    --accent: #d97757;
+    --accent-soft: #f4a989;
+    --sage: #7a9e7e;
+    --sage-soft: #b8d4bb;
+    --peach: #f4c5a0;
+    --border: rgba(42, 37, 32, 0.08);
+    --border-strong: rgba(42, 37, 32, 0.15);
+    --shadow-sm: 0 2px 8px rgba(42, 37, 32, 0.04);
+    --shadow-md: 0 8px 24px rgba(42, 37, 32, 0.08);
+    --shadow-lg: 0 20px 60px rgba(42, 37, 32, 0.12);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --topbar-h: 72px;
+    --bottomnav-h: 88px;
+  }
+
+  html { height: 100%; overflow: hidden; }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.6;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    .cursor, .cursor-ring { display: block; }
+  }
+  @media (hover: none), (pointer: coarse) {
+    .cursor, .cursor-ring { display: none !important; }
+  }
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: width 0.2s var(--ease), height 0.2s var(--ease);
+    mix-blend-mode: multiply;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+    transform: translate(-50%, -50%);
+  }
+  .cursor.hover { width: 12px; height: 12px; }
+  .cursor-ring.hover { width: 60px; height: 60px; opacity: 0.2; }
+
+  .deck { position: relative; width: 100%; height: 100%; overflow: hidden; z-index: 2; }
+  .slides { display: flex; width: 100%; height: 100%; transition: transform 1s var(--ease-out); align-items: stretch; }
+  
+  .slide {
+    flex: 0 0 100%; width: 100%; height: 100%;
+    padding: calc(var(--topbar-h) + 24px) clamp(24px, 5vw, 80px) calc(var(--bottomnav-h) + 24px);
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; opacity: 0.4; transition: opacity 1s var(--ease);
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; }
+
+  .slide-inner { max-width: 1400px; width: 100%; margin: 0 auto; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(20px, 4vw, 48px); height: var(--topbar-h);
+    background: rgba(245, 241, 234, 0.85);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-family: 'Fraunces', serif; font-weight: 500; font-size: 15px; color: var(--ink-soft); }
+  .brand-dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-mute); }
+  .slide-counter .current { color: var(--ink); font-weight: 500; }
+  .btn-icon {
+    width: 40px; height: 40px; display: grid; place-items: center;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+    color: var(--ink-soft); cursor: pointer; transition: all 0.3s var(--ease);
+  }
+  .btn-icon:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .btn-icon svg { width: 16px; height: 16px; }
+
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--bg-soft); z-index: 60; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); width: 0%; transition: width 1s var(--ease-out); }
+
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    padding: 0 clamp(20px, 4vw, 48px); height: var(--bottomnav-h);
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(245, 241, 234, 0.85);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px;
+    border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+    color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.4s var(--ease);
+  }
+  .nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn svg { width: 16px; height: 16px; }
+
+  .dots { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: 40vw; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); transition: all 0.5s var(--ease); cursor: pointer; flex-shrink: 0; }
+  .dot:hover { background: var(--ink-mute); }
+  .dot.active { width: 32px; border-radius: 4px; background: var(--accent); }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 400; letter-spacing: -0.02em; }
+  h1 { font-size: clamp(40px, 6vw, 92px); line-height: 1.05; }
+  h2 { font-size: clamp(30px, 4vw, 56px); line-height: 1.1; margin-bottom: 20px; }
+  h3 { font-size: clamp(18px, 1.8vw, 26px); font-weight: 500; }
+  .lead { font-size: clamp(14px, 1.2vw, 18px); color: var(--ink-soft); max-width: 640px; line-height: 1.7; }
+
+  .cover { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: center; }
+  .cover-text .title-main { font-size: clamp(40px, 6.5vw, 100px); line-height: 0.95; margin-bottom: clamp(20px, 3vh, 32px); }
+  .title-main .italic { font-style: italic; color: var(--accent); }
+  .cover-sub { font-family: 'Fraunces', serif; font-size: clamp(14px, 1.3vw, 20px); color: var(--ink-soft); margin-bottom: 8px; }
+  .cover-org { font-family: 'Fraunces', serif; font-size: clamp(18px, 1.8vw, 28px); font-weight: 500; margin-bottom: clamp(24px, 4vh, 48px); }
+  .cover-meta { display: flex; gap: clamp(24px, 3vw, 48px); padding-top: clamp(20px, 3vh, 36px); border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .meta-item .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; }
+  .meta-item .value { font-family: 'Fraunces', serif; font-size: clamp(15px, 1.3vw, 18px); font-weight: 500; color: var(--ink); }
+  
+  .cover-visual {
+    position: relative;
+    width: 100%;
+    max-width: clamp(360px, 38vw, 620px);
+    margin-left: auto;
+    aspect-ratio: 4 / 3;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(244, 169, 137, 0.08), rgba(244, 197, 160, 0.05));
+    box-shadow: var(--shadow-md);
+    transition: transform 0.6s var(--ease);
+  }
+  .cover-visual:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .cover-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(245, 241, 234, 0.4) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .cover-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .section-header { margin-bottom: clamp(24px, 3vh, 40px); }
+
+  .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 2vw, 28px); }
+  .member-card {
+    position: relative; padding: clamp(24px, 2.5vw, 40px) clamp(20px, 2vw, 32px);
+    border: 1px solid var(--border); border-radius: 20px; background: var(--surface);
+    transition: all 0.5s var(--ease); overflow: hidden;
+  }
+  .member-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+    transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease);
+  }
+  .member-card:hover::before { transform: scaleX(1); }
+  .member-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .member-card.coordinator { background: linear-gradient(135deg, var(--surface), var(--surface-2)); border-color: var(--accent-soft); }
+  .member-card.coordinator::before { transform: scaleX(1); }
+  .member-avatar {
+    width: clamp(56px, 5vw, 72px); height: clamp(56px, 5vw, 72px);
+    border-radius: 16px; display: grid; place-items: center;
+    margin-bottom: clamp(20px, 2vh, 32px);
+    background: linear-gradient(135deg, var(--accent-soft), var(--peach));
+    color: white; font-family: 'Fraunces', serif;
+    font-size: clamp(18px, 1.8vw, 24px); font-weight: 500; letter-spacing: 0.05em;
+  }
+  .member-index { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 12px; font-weight: 600; }
+  .member-name { font-family: 'Fraunces', serif; font-size: clamp(16px, 1.4vw, 20px); font-weight: 500; line-height: 1.35; color: var(--ink); }
+  .member-role { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 5vw, 80px); align-items: center; }
+  .stat-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(12px, 1.5vw, 20px); }
+  .stat-card { padding: clamp(20px, 2vw, 32px); border: 1px solid var(--border); border-radius: 18px; background: var(--surface); transition: all 0.4s var(--ease); }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .stat-card .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 12px; }
+  .stat-card .stat-value { font-family: 'Fraunces', serif; font-size: clamp(36px, 4vw, 56px); font-weight: 400; line-height: 1; color: var(--ink); }
+  .stat-card .stat-value .unit { font-size: 0.4em; color: var(--ink-soft); margin-left: 4px; }
+  .stat-card.highlight { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); border-color: transparent; color: white; }
+  .stat-card.highlight .stat-label { color: rgba(255,255,255,0.8); }
+  .stat-card.highlight .stat-value { color: white; }
+  .stat-card.highlight .stat-value .unit { color: rgba(255,255,255,0.7); }
+
+  .ring-chart-wrap { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 1; max-width: clamp(260px, 30vw, 440px); margin: 0 auto; width: 100%; }
+  .ring-chart { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--bg-soft); stroke-width: 16; }
+  .ring-fill { fill: none; stroke: url(#ringGrad); stroke-width: 16; stroke-linecap: round; stroke-dasharray: 0 1000; transition: stroke-dasharray 2s var(--ease-out); }
+  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .ring-percent { font-family: 'Fraunces', serif; font-size: clamp(56px, 6vw, 88px); font-weight: 400; line-height: 1; color: var(--accent); }
+  .ring-label { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); }
+
+  .proker-slide { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 4vw, 64px); align-items: center; height: 100%; }
+  .proker-info { display: flex; flex-direction: column; gap: clamp(14px, 2vh, 22px); max-width: 600px; }
+  .proker-code-badge { display: inline-flex; align-items: center; gap: 12px; padding: 10px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--ink-soft); width: fit-content; }
+  .proker-code-badge::before { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+  .proker-title-large { font-family: 'Fraunces', serif; font-size: clamp(26px, 3.2vw, 44px); font-weight: 400; line-height: 1.15; color: var(--ink); }
+  .proker-status { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; width: fit-content; }
+  .proker-status.done { background: rgba(122, 158, 126, 0.15); color: var(--sage); border: 1px solid var(--sage-soft); }
+  .proker-status.pending { background: rgba(217, 119, 87, 0.1); color: var(--accent); border: 1px solid var(--accent-soft); }
+  .proker-status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .proker-meta-block { margin-top: 4px; }
+  .proker-meta-block .meta-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 8px; }
+  .proker-meta-block p { font-size: clamp(14px, 1.1vw, 16px); color: var(--ink-soft); line-height: 1.7; }
+
+  .proker-visual { position: relative; width: 100%; max-width: 480px; margin-left: auto; aspect-ratio: 1; }
+  .proker-visual-card { 
+    position: absolute; inset: 0; 
+    border-radius: 24px; 
+    padding: clamp(28px, 3vw, 44px); 
+    display: flex; flex-direction: column; 
+    justify-content: space-between; 
+    background: var(--surface); 
+    border: 1px solid var(--border); 
+    box-shadow: var(--shadow-lg); 
+    transition: transform 0.5s var(--ease); 
+  }
+  .proker-visual-card:hover { transform: rotate(-2deg) scale(1.02); }
+  .proker-visual-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 16px; }
+  .proker-visual-content { font-family: 'Fraunces', serif; font-size: clamp(16px, 1.4vw, 20px); font-weight: 400; line-height: 1.5; color: var(--ink); }
+  
+  .proker-visual-image {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: clamp(16px, 2vh, 24px) 0;
+    min-height: 0;
+    position: relative;
+  }
+  .proker-visual-image img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.5s var(--ease);
+  }
+  .proker-visual-card:hover .proker-visual-image img { transform: scale(1.05); }
+  
+  .proker-visual-footer { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+  .pj-tag { padding: 8px 14px; background: var(--bg-soft); border-radius: 8px; font-size: clamp(11px, 0.9vw, 13px); color: var(--ink-soft); }
+
+  .closing { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+  .closing-mark { width: clamp(72px, 7vw, 88px); height: clamp(72px, 7vw, 88px); display: grid; place-items: center; border-radius: 24px; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); margin-bottom: clamp(32px, 5vh, 56px); color: white; box-shadow: var(--shadow-lg); }
+  .closing-mark svg { width: clamp(32px, 3.5vw, 40px); height: clamp(32px, 3.5vw, 40px); }
+  .closing h1 { font-size: clamp(48px, 8vw, 128px); font-weight: 300; letter-spacing: -0.03em; margin-bottom: clamp(24px, 4vh, 40px); color: var(--ink); }
+  .closing h1 .italic { font-style: italic; color: var(--accent); }
+  .closing-org { font-family: 'Fraunces', serif; font-size: clamp(16px, 1.6vw, 24px); font-weight: 500; color: var(--ink); margin-bottom: 10px; }
+  .closing-period { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); }
+  .closing-divider { width: 80px; height: 1px; background: var(--accent); margin: clamp(28px, 4vh, 48px) auto; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+  .slide.active .reveal { opacity: 1; transform: translateY(0); }
+  .slide.active .reveal.d1 { transition-delay: 0.1s; }
+  .slide.active .reveal.d2 { transition-delay: 0.2s; }
+  .slide.active .reveal.d3 { transition-delay: 0.3s; }
+  .slide.active .reveal.d4 { transition-delay: 0.4s; }
+  .slide.active .reveal.d5 { transition-delay: 0.5s; }
+  .slide.active .reveal.d6 { transition-delay: 0.6s; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(245, 241, 234, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; display: grid; place-items: center; opacity: 0; pointer-events: none; transition: opacity 0.5s var(--ease); padding: 24px; }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal { width: 100%; max-width: 800px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 24px; background: var(--surface); box-shadow: var(--shadow-lg); transform: translateY(30px) scale(0.95); transition: transform 0.6s var(--ease-out); }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-head { padding: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 44px) clamp(20px, 2.5vw, 28px); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .modal-code { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 12px; }
+  .modal-title { font-family: 'Fraunces', serif; font-size: clamp(22px, 2.5vw, 32px); font-weight: 400; line-height: 1.2; color: var(--ink); }
+  .modal-close { width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); color: var(--ink-soft); cursor: pointer; display: grid; place-items: center; flex-shrink: 0; transition: all 0.3s var(--ease); }
+  .modal-close:hover { color: var(--accent); border-color: var(--accent); }
+  .modal-close svg { width: 16px; height: 16px; }
+  .modal-body { padding: clamp(24px, 3vw, 44px); }
+  .modal-row { display: grid; grid-template-columns: 160px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .modal-row:last-child { border-bottom: none; }
+  .modal-row .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); padding-top: 4px; }
+  .modal-row .value { color: var(--ink); font-size: 15px; line-height: 1.7; }
+  .pj-list { display: flex; flex-direction: column; gap: 10px; }
+  .pj-item { display: inline-flex; align-items: center; gap: 12px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); font-size: 14px; width: fit-content; }
+  .pj-item::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  @media (max-width: 1024px) {
+    .cover, .proker-slide, .summary-grid { grid-template-columns: 1fr; gap: clamp(28px, 4vh, 48px); }
+    .cover-visual, .proker-visual { max-width: clamp(260px, 55vw, 420px); margin: 0 auto; }
+    .members-grid { grid-template-columns: repeat(2, 1fr); }
+    .proker-visual { aspect-ratio: 4/3; }
+  }
+
+  @media (max-width: 640px) {
+    :root { --topbar-h: 60px; --bottomnav-h: 72px; }
+    .slide { padding: 68px 20px 80px; justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .slide-inner { height: auto; min-height: 100%; justify-content: flex-start; padding: 16px 0; }
+    .topbar { padding: 0 20px; }
+    .brand { font-size: 13px; gap: 10px; }
+    .brand-dot { width: 8px; height: 8px; }
+    .slide-counter { font-size: 12px; }
+    .btn-icon { width: 36px; height: 36px; }
+    .btn-icon svg { width: 14px; height: 14px; }
+    .bottom-nav { padding: 0 16px; }
+    .nav-btn { padding: 10px 16px; font-size: 13px; gap: 8px; }
+    .nav-btn span { display: none; }
+    .nav-btn svg { width: 14px; height: 14px; }
+    .dots { gap: 6px; max-width: 50vw; }
+    .dot { width: 6px; height: 6px; }
+    .dot.active { width: 24px; }
+    h1 { font-size: clamp(32px, 10vw, 48px); }
+    h2 { font-size: clamp(26px, 7vw, 36px); }
+    .eyebrow { font-size: 11px; margin-bottom: 16px; }
+    .eyebrow::before { width: 24px; }
+    .lead { font-size: 14px; }
+    .cover-text .title-main { font-size: clamp(36px, 11vw, 52px); }
+    .cover-sub { font-size: 14px; }
+    .cover-org { font-size: 18px; margin-bottom: 24px; }
+    .cover-visual { max-width: 260px; }
+    .cover-meta { gap: 20px; }
+    .section-header { margin-bottom: 20px; }
+    .members-grid { grid-template-columns: 1fr; gap: 14px; }
+    .member-card { padding: 24px; }
+    .member-avatar { width: 56px; height: 56px; margin-bottom: 20px; }
+    .member-name { font-size: 17px; }
+    .summary-grid { gap: 32px; }
+    .stat-cards { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 20px; }
+    .stat-card .stat-value { font-size: 36px; }
+    .ring-chart-wrap { max-width: 240px; }
+    .ring-percent { font-size: 56px; }
+    .proker-slide { gap: 24px; }
+    .proker-title-large { font-size: clamp(24px, 7vw, 32px); }
+    .proker-visual { max-width: 100%; aspect-ratio: 1; }
+    .proker-visual-card { padding: 24px; }
+    .proker-visual-content { font-size: 16px; }
+    .closing h1 { font-size: clamp(44px, 12vw, 64px); }
+    .closing-org { font-size: 16px; }
+    .closing-mark { width: 72px; height: 72px; margin-bottom: 32px; }
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal { max-height: 90vh; border-radius: 24px 24px 0 0; border-bottom: none; }
+    .modal-row { grid-template-columns: 1fr; gap: 6px; }
+    .modal-row .label { padding-top: 0; }
+  }
+
+  @media (max-width: 380px) {
+    .stat-cards { grid-template-columns: 1fr; }
+    .cover-meta { flex-direction: column; gap: 16px; }
+  }
+
+  @media (max-height: 500px) and (orientation: landscape) {
+    :root { --topbar-h: 52px; --bottomnav-h: 60px; }
+    .slide { padding: 60px 24px 68px; }
+    .cover, .proker-slide, .summary-grid { grid-template-columns: 1.2fr 1fr; gap: 32px; }
+    .cover-visual, .proker-visual { max-width: 240px; }
+    .members-grid { grid-template-columns: repeat(4, 1fr); }
+    h1 { font-size: 40px; }
+    h2 { font-size: 28px; }
+    .cover-text .title-main { font-size: 40px; }
+  }
+
+  .modal::-webkit-scrollbar { width: 6px; }
+  .modal::-webkit-scrollbar-track { background: transparent; }
+  .modal::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <span>Divisi Praktikum</span>
+  </div>
+  <div class="topbar-right">
+    <div class="slide-counter">
+      <span class="current" id="currentNum">01</span>
+      <span>/ <span id="totalNum">10</span></span>
+    </div>
+    <button class="btn-icon" id="fullscreenBtn" title="Mode Presentasi (F)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+        <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+        <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="deck">
+  <div class="slides" id="slides"></div>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn" id="prevBtn" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m15 18-6-6 6-6"/>
+    </svg>
+    <span>Sebelumnya</span>
+  </button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn">
+    <span>Selanjutnya</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m9 18 6-6-6-6"/>
+    </svg>
+  </button>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-code" id="modalCode">PROKER 01</div>
+        <h3 class="modal-title" id="modalTitle">Judul Program Kerja</h3>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Tutup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" x2="6" y1="6" y2="18"/>
+          <line x1="6" x2="18" y1="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+  const MEMBERS = [
+    { name: 'Muh. Jufri Nur Syam', initials: 'JR', label: 'KOORDINATOR' },
+    { name: 'Andi Azizah Ramadhani Amar', initials: 'ZA' },
+    { name: 'Nurfitra', initials: 'NF' },
+    { name: 'Syarifah Nuraeni', initials: 'SN' }
+  ];
+
+  const PROKER = [
+    { code: 'PROKER 01', name: 'Mengatur Jadwal Pemakaian Ruangan Praktikum', objective: 'Agar pemakaian ruangan praktikum lebih terstruktur.', time: 'Selama periode kepengurusan 2026/2027', pj: ['Muh. Jufri Nur Syam', 'Andi Azizah Ramadhani Amar'], status: 'done', image: 'https://i.postimg.cc/C5jt7KNv/proker-1.png' },
+    { code: 'PROKER 02', name: 'Memasang Tata Tertib untuk Ruang Praktikum', objective: 'Agar pemakaian ruang praktikum lebih teratur dan kondusif.', time: '1 kali (pada awal periode kepengurusan)', pj: ['Muh. Jufri Nur Syam', 'Nurfitra'], status: 'pending', image: 'https://i.postimg.cc/D0qD6zg6/proker-2.png' },
+    { code: 'PROKER 03', name: 'Menyiapkan Peralatan Perkuliahan di Ruangan Praktikum', objective: 'Sebagai penunjang proses belajar-mengajar di ruang praktikum.', time: 'Selama periode kepengurusan 2026/2027', pj: ['Andi Azizah Ramadhani Amar', 'Syarifah Nuraeni'], status: 'done', image: 'https://i.postimg.cc/rsSbjpJf/proker-3.png' },
+    { code: 'PROKER 04', name: 'Membuat dan Memantau Form Daftar Hadir Praktikan', objective: 'Penelusuran penggunaan komputer.', time: 'Selama periode kepengurusan 2026/2027', pj: ['Muh. Jufri Nur Syam'], status: 'done', image: 'https://i.postimg.cc/SR03c9WV/proker-4.png' },
+    { code: 'PROKER 05', name: 'Menyebar Angket Terkait Kualitas Layanan di LABKOMMAT', objective: 'Untuk menggambarkan kinerja pelayanan di LABKOMMAT dan sebagai bahan evaluasi untuk asisten.', time: '2 kali (akhir semester ganjil dan genap)', pj: ['Syarifah Nuraeni'], status: 'pending', image: 'https://i.postimg.cc/prD7CdZG/proker-5.png' },
+    { code: 'PROKER 06', name: 'Merekap Materi Perkuliahan di LABKOMMAT', objective: 'Sebagai bahan rujukan untuk proker dari Divisi Litbang dalam membuat pelatihan untuk mahasiswa.', time: '2 kali (akhir semester ganjil dan genap)', pj: ['Andi Azizah Ramadhani Amar', 'Nurfitra'], status: 'pending', image: 'https://i.postimg.cc/7hgc9LVc/proker-6.png' }
+  ];
+
+  const COVER_IMAGE_URL = 'https://i.postimg.cc/T3ksCFrB/cover-image.png';
+
+  let currentSlide = 0;
+  const TOTAL_SLIDES = 10;
+
+  const slidesEl = document.getElementById('slides');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dotsEl = document.getElementById('dots');
+  const progressFill = document.getElementById('progressFill');
+  const currentNum = document.getElementById('currentNum');
+  const totalNum = document.getElementById('totalNum');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+  const modalCode = document.getElementById('modalCode');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (hasHover) {
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top = mouseY + 'px';
+    });
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest('button, a, .member-card, .dot, .filter-btn')) {
+        cursor.classList.add('hover');
+        cursorRing.classList.add('hover');
+      }
+    });
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('button, a, .member-card, .dot, .filter-btn')) {
+        cursor.classList.remove('hover');
+        cursorRing.classList.remove('hover');
+      }
+    });
+  }
+
+  function buildAllSlides() {
+    let html = '';
+
+    // Slide 1: Cover
+    html += `
+    <section class="slide" data-index="0">
+      <div class="slide-inner">
+        <div class="cover">
+          <div class="cover-text">
+            <div class="eyebrow reveal">Laporan Pertanggungjawaban</div>
+            <h1 class="title-main reveal d1">Laporan<br/><span class="italic">Divisi Praktikum</span></h1>
+            <div class="cover-sub reveal d2">Laboratorium Komputer Matematika</div>
+            <div class="cover-org reveal d3">FMIPA Universitas Negeri Makassar</div>
+            <div class="cover-meta reveal d4">
+              <div class="meta-item"><div class="label">Periode</div><div class="value">2026 / 2027</div></div>
+              <div class="meta-item"><div class="label">Divisi</div><div class="value">Praktikum</div></div>
+              <div class="meta-item"><div class="label">Program Kerja</div><div class="value">06 Program</div></div>
+            </div>
+          </div>
+          <div class="cover-visual reveal d3">
+            <img src="${COVER_IMAGE_URL}" alt="Ilustrasi Laboratorium Komputer" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>`;
+
+    // Slide 2: Profil
+    html += `
+    <section class="slide" data-index="1">
+      <div class="slide-inner">
+        <div class="section-header">
+          <div class="eyebrow reveal">02 — Struktur Organisasi</div>
+          <h2 class="reveal d1">Profil Divisi Praktikum</h2>
+          <p class="lead reveal d2">Empat anggota yang bertanggung jawab atas pelaksanaan program kerja Divisi Praktikum LABKOMMAT FMIPA UNM periode 2026/2027.</p>
+        </div>
+        <div class="members-grid">
+          ${MEMBERS.map((m, i) => {
+            const isCoordinator = !!m.label;
+            const displayLabel = m.label || 'ANGGOTA 0' + (i + 1);
+            return `
+            <div class="member-card reveal d${i + 2}${isCoordinator ? ' coordinator' : ''}">
+              <div class="member-avatar">${m.initials}</div>
+              <div class="member-index">${displayLabel}</div>
+              <div class="member-name">${m.name}</div>
+              <div class="member-role">Divisi Praktikum</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </section>`;
+
+    // Slide 3: Ringkasan
+    html += `
+    <section class="slide" data-index="2">
+      <div class="slide-inner">
+        <div class="section-header">
+          <div class="eyebrow reveal">03 — Ringkasan Eksekutif</div>
+          <h2 class="reveal d1">Ringkasan Program Kerja</h2>
+          <p class="lead reveal d2">Capaian pelaksanaan program kerja Divisi Praktikum selama periode kepengurusan 2026/2027.</p>
+        </div>
+        <div class="summary-grid">
+          <div class="stat-cards reveal d2">
+            <div class="stat-card">
+              <div class="stat-label">Total Proker</div>
+              <div class="stat-value" id="statTotal">0<span class="unit">proker</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Terlaksana</div>
+              <div class="stat-value" id="statDone" style="color: var(--sage);">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Belum Terlaksana</div>
+              <div class="stat-value" id="statPending" style="color: var(--accent);">0</div>
+            </div>
+            <div class="stat-card highlight">
+              <div class="stat-label">Keterlaksanaan</div>
+              <div class="stat-value"><span id="statPercent">0</span><span class="unit">%</span></div>
+            </div>
+          </div>
+          <div class="ring-chart-wrap reveal d3">
+            <svg class="ring-chart" viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#d97757"/>
+                  <stop offset="100%" stop-color="#f4a989"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="100" cy="100" r="85"/>
+              <circle class="ring-fill" id="ringFill" cx="100" cy="100" r="85"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-percent"><span id="ringPercent">0</span>%</div>
+              <div class="ring-label">Keterlaksanaan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+
+    // Slides 4-9: Proker 01-06
+    PROKER.forEach((p, i) => {
+      const slideIndex = i + 3;
+      const statusClass = p.status === 'done' ? 'done' : 'pending';
+      const statusText = p.status === 'done' ? 'Terlaksana' : 'Belum Terlaksana';
+      
+      html += `
+      <section class="slide" data-index="${slideIndex}">
+        <div class="slide-inner">
+          <div class="proker-slide">
+            <div class="proker-info">
+              <div class="proker-code-badge reveal">${p.code}</div>
+              <h2 class="proker-title-large reveal d1">${p.name}</h2>
+              <div class="proker-status ${statusClass} reveal d2">
+                <span class="proker-status-dot"></span>
+                ${statusText}
+              </div>
+              <div class="proker-meta-block reveal d3">
+                <div class="meta-label">Tujuan</div>
+                <p>${p.objective}</p>
+              </div>
+              <div class="proker-meta-block reveal d4">
+                <div class="meta-label">Waktu Pelaksanaan</div>
+                <p>${p.time}</p>
+              </div>
+            </div>
+            <div class="proker-visual reveal d2">
+              <div class="proker-visual-card">
+                <div>
+                  <div class="proker-visual-label">Penanggung Jawab</div>
+                  <div class="proker-visual-content">${p.pj.join('<br/>')}</div>
+                </div>
+                <div class="proker-visual-image">
+                  <img src="${p.image}" alt="Ilustrasi ${p.code}" loading="lazy" />
+                </div>
+                <div class="proker-visual-footer">
+                  ${p.pj.map(n => `<div class="pj-tag">${n}</div>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>`;
+    });
+
+    // Slide 10: Penutup (data-index = 9)
+    html += `
+    <section class="slide" data-index="9">
+      <div class="slide-inner">
+        <div class="closing">
+          <div class="closing-mark reveal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          </div>
+          <h1 class="reveal d1">Terima <span class="italic">Kasih</span></h1>
+          <div class="closing-divider reveal d2"></div>
+          <div class="closing-org reveal d3">Divisi Praktikum LABKOMMAT FMIPA UNM</div>
+          <div class="closing-period reveal d4">Periode Kepengurusan 2026 / 2027</div>
+        </div>
+      </div>
+    </section>`;
+
+    slidesEl.innerHTML = html;
+  }
+
+  function renderStatistics() {
+    const total = PROKER.length;
+    const done = PROKER.filter(p => p.status === 'done').length;
+    const pending = total - done;
+    const percent = Math.round((done / total) * 100);
+
+    animateNumber('statTotal', total);
+    animateNumber('statDone', done);
+    animateNumber('statPending', pending);
+    animateNumber('statPercent', percent);
+    animateNumber('ringPercent', percent);
+
+    const ring = document.getElementById('ringFill');
+    const circumference = 2 * Math.PI * 85;
+    const offset = (percent / 100) * circumference;
+    setTimeout(() => {
+      ring.style.strokeDasharray = `${offset} ${circumference}`;
+    }, 200);
+  }
+
+  function animateNumber(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const duration = 1400;
+    const start = performance.now();
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function buildDots() {
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < TOTAL_SLIDES; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goToSlide(i));
+      dotsEl.appendChild(dot);
+    }
+  }
+
+  function updateNav() {
+    const allSlides = document.querySelectorAll('.slide');
+    slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
+    allSlides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === TOTAL_SLIDES - 1;
+
+    currentNum.textContent = String(currentSlide + 1).padStart(2, '0');
+    totalNum.textContent = String(TOTAL_SLIDES).padStart(2, '0');
+
+    const percent = ((currentSlide + 1) / TOTAL_SLIDES) * 100;
+    progressFill.style.width = `${percent}%`;
+
+    if (currentSlide === 2) {
+      setTimeout(renderStatistics, 400);
+    }
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= TOTAL_SLIDES) return;
+    currentSlide = index;
+    updateNav();
+  }
+
+  function next() { goToSlide(currentSlide + 1); }
+  function prev() { goToSlide(currentSlide - 1); }
+
+  function closeModal() { modalOverlay.classList.remove('open'); }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  buildAllSlides();
+  buildDots();
+  updateNav();
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+  document.addEventListener('keydown', (e) => {
+    if (modalOverlay.classList.contains('open')) {
+      if (e.key === 'Escape') closeModal();
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') goToSlide(0);
+    else if (e.key === 'End') goToSlide(TOTAL_SLIDES - 1);
+    else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+  });
+
+  let touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const diffX = touchStartX - e.changedTouches[0].screenX;
+    const diffY = touchStartY - e.changedTouches[0].screenY;
+    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      if (diffX > 0) next(); else prev();
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>
